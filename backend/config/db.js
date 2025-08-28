@@ -17,14 +17,20 @@ const connectDB = async () => {
       return { connection: { host: 'mock-db-server' } };
     }
     
+    // Check if MONGO_URI is defined
+    if (!process.env.MONGO_URI) {
+      console.error('❌ MONGO_URI is not defined in .env');
+      process.exit(1);
+    }
+    
     // For production/development
     const conn = await mongoose.connect(process.env.MONGO_URI);
-    console.log(`MongoDB Connected: ${conn.connection.host}`);
+    console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
     return conn;
     
   } catch (err) {
     // If there is any error during the connection attempt
-    console.error(`Error connecting to MongoDB: ${err.message}`);
+    console.error(`❌ Error connecting to MongoDB: ${err.message}`);
     
     // In test mode, don't exit the process
     const isTest = process.env.NODE_ENV === 'test' || process.argv.includes('--test');
@@ -36,6 +42,4 @@ const connectDB = async () => {
     }
   }
 };
-
-// Export the connectDB function
 module.exports = connectDB;
